@@ -15,6 +15,8 @@ void sql_test()
 }
 int main()
 {
-	sql_test();
+	im::IM im_server;
+	im_server.Init();
+	im_server.Run();
 	return 0;
 }

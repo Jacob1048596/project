@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style type="text/css">
+    body {
+      background-color: #789; margin: 0;
+      padding: 0; font: 14px Helvetica, Arial, sans-serif;
+    }
+    div.content {
+        width: 800px; height:600px;margin: 2em auto; padding: 20px 50px;
+        background-color: #fff; border-radius: 1em;
+    }
+    #messages {
+      border: 2px solid #fec; border-radius: 0em;
+      height: 30em; overflow: scroll; padding: 0.5em 1em;
+    }
+    #send_input{
+        width:650px;
+    }
+    a:link, a:visited { color: #69c; text-decoration: none; }
+    @media (max-width: 700px) {
+      body { background-color: #fff; }
+      div.content {
+        width: auto; margin: 0 auto; border-radius: 0;
+        padding: 1em;
+      }
+    }
+    #info{
+        animation:change 10s linear 0s infinite;font-size:15px;font-weight:60;
+    }
+    #user_name{
+        animation:change 5s linear 0s infinite;font-size:12px;font-weight:50;
+    }
+    @keyframes change{
+        0%   {color:#333;}
+        25%  {color:#ff0;}
+        50%  {color:#f60;}
+        75%  {color:#cf0;}
+        100% {color:#f00;}
+    }
+</style>
+
+</head>
+<body>
+  <div id="app">
+    <div class="content">
+      <h1>欢迎来到我的IM聊天系统</h1>
+
+      <p>
+      </p>
+
+      <div id="messages">
+      </div>
+
+      <p>
+        <input type="text" id="send_input" />
+        <button id="send_button"> 发送 </button>
+        <button id="quit_button"> 退出 </button>
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>
