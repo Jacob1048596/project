@@ -292,23 +292,22 @@
             <div id="login_wrap">
                 <div id="login"><!-- 登录注册切换动画 -->
                     <div id="status">
-                        <i style="top: 0">Log</i>
-                        <i style="top: 35px">Sign</i>
-                        <i style="right: 5px">in</i>
+                        <i style="top: 0"   v-show="show_flag=='login'">Login</i>
+                        <i style="top: 0"   v-show="show_flag=='sigin'">Signin</i>
                     </div>
                     <span>
                         <form action="post">
                             <p class="form">
-                                <input type="text" id="user" placeholder="用户名"">
+                                <input type="text" id="user" placeholder="用户名"   v-model="username">
                             </p>
                             <p class="form">
-                                <input type="password" id="passwd" placeholder="密码">
+                                <input type="password" id="passwd" placeholder="密码" v-model="password">
                             </p>
-                            <p class="form">
-                                <input type="password" id="passwd" placeholder="确认密码">
+                            <p class="form"v-show="show_flag=='sigin'">
+                                <input type="password" id="passwd" placeholder="确认密码"  v-model="confirm_password">
                             </p>
-                            <input type="button" value="登录" class="btn"  style="margin-right: 20px;">
-                            <input type="button" value="注册" class="btn"  id="btn">
+                            <input type="button" value="登录" class="btn"  style="margin-right: 20px;"  v-on:click="login()">
+                            <input type="button" value="注册" class="btn"  id="btn" v-on:click="sigin()">
                         </form>
                     </span>
                 </div>
@@ -338,5 +337,95 @@
         </div>
     </div>
 </body>
+<script src="https:/cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https:/ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+<script>
+    var app=new Vue({
+        el:'#app',
+        data:{
+            show_flag:"login",  //login-登陆显示/sigin-注册显示
+            username:"",
+            password:"",
+            confirm_password:""
+        },
+        methods:{
+            sigin:function()
+            {
+                if(this.show_flag=="login")
+                {
+                    this.show_flag="sigin";
+                }else{
+                    if(this.username.length<6){
+                        alert("用户名不少于6个字符");
+                        return;
+                    } if(this.password.length<6){
+                        alert("密码不少于6个字符");
+                        return;
+                    }
+                    if(this.password!=this.confirm_password){
+                        alert("密码两次输入不一致");
+                        return;
+                    }
+                    var userinfo={
+                        name:this.username,
+                        passwd:this.password
+                    }
+                    $.ajax({
+                        type:"post",
+                        url:"/reg",
+                        data:JSON.stringify(userinfo),
+                        context:this,
+                        success:function(data,status,xhr){
+                            alert("注册成功");
+                            this.show_flag="login";
+                            this.username="";
+                            this.password="";
+                            this.confirm_password="";
+                        },
+                        error:function(xhr){
+                            alert("注册失败："+xhr.status+xhr.responseText);
+                            this.username="";
+                            this.password="";
+                            this.confirm_password="";
+                        }
+                    })
+                }
+            },
+            login:function()
+            {
+                if(this.show_flag=="sigin")
+                {
+                    this.show_flag="login";
+                }else{
+                    if(this.username.length<6){
+                        alert("用户名不少于6个字符");
+                        return;
+                    } if(this.password.length<6){
+                        alert("密码不少于6个字符");
+                        return;
+                    }
+                    var userinfo={
+                        name:this.username,
+                        passwd:this.password
+                    }
+                    $.ajax({
+                        type:"post",
+                        url:"/login",
+                        data:JSON.stringify(userinfo),
+                        context:this,
+                        success:function(data,status,xhr){
+                            alert("登录成功");
+                            window.location.href="/index.html";
+                        },
+                        error:function(xhr){
+                            alert("登录失败："+xhr.status+xhr.responseText);
+                           
+                        }
+                    })
+                }
+            }
+        }
+    })
+</script>
 
 </html>

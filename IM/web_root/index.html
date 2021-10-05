@@ -57,12 +57,71 @@
       </div>
 
       <p>
-        <input type="text" id="send_input" />
-        <button id="send_button"> 发送 </button>
-        <button id="quit_button"> 退出 </button>
+        <input type="text" id="send_input" v-model="send_msg" />
+        <button id="send_button" v-on:click="send()"> 发送 </button>
+        <button id="quit_button" v-on:click="quit()"> 退出 </button>
       </p>
     </div>
   </div>
 </body>
-
+<script src="https:/cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app=new Vue({
+    el:"#app",
+    data:{
+      send_msg:"",
+      websock:null
+    },
+    methods:{
+      init:function(){
+        var ws_url="ws://"+window.location.host+"/websocket";
+        websock=new WebSocket(ws_url);
+        websock.onopen=this.wsonopen;
+        Socket.onmessage=
+        Socket.onerror=
+        Socket.onclose
+      },
+      wsonopen:function()
+      {
+        //websocket连接成功的回调函数
+        alert("聊天通道建立成功");
+      },
+      wsonmessage:function(e)
+      {
+        //收到消息的回调函数
+        
+        var com_div=document.createElement("div");
+        com_div.innerHTML=e.data;
+        var html_div=document.getElementById("messages");
+        html_div.appendChild(com_div);
+      },
+      wsonerror:function()
+      {
+        //连接出错
+        alert("通信错误");
+        this.init();
+      },
+      wsonclose:function()
+      {
+        //连接关闭时触发
+        alert("连接关闭");
+      },
+      send:function()
+      {
+        if(this.send_msg.length==0){
+          alert("消息不能为空");
+          return;
+        }
+        var msg="<p>用户名："+this.send_msg+"</p>";
+        whis.websock.send(msg);
+        this.send_msg="";
+      },
+      quit:function()
+      {
+        whis.websock.close();
+        window.location.href="/login.html"
+      }
+    }
+  })
+</script>
 </html>

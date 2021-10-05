@@ -422,6 +422,7 @@ namespace im{
 		_list.push_back(s);
 		stringstream cookie;
 		cookie<<"Set-Cookie:SESSION_ID="<<s.session_id<<"; NAME="<<s.name<<"; pash=/\r\n";
+		cookie<<"Set-Cookie:NAME="<<s.name<<"; pash=/\r\n";
 		rsp_header+=cookie.str();
 
 		mg_http_reply(c,rsp_status,rsp_header.c_str(),rsp_body.c_str());
