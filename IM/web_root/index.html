@@ -54,10 +54,11 @@
       </p>
 
       <div id="messages">
+
       </div>
 
       <p>
-        <input type="text" id="send_input" v-model="send_msg" />
+        <input type="text" id="send_input" v-on:keyup.enter="send()" v-model="send_msg" />
         <button id="send_button" v-on:click="send()"> 发送 </button>
         <button id="quit_button" v-on:click="quit()"> 退出 </button>
       </p>
@@ -70,16 +71,23 @@
     el:"#app",
     data:{
       send_msg:"",
-      websock:null
+      websock:null,
+      real_msg:""
     },
     methods:{
       init:function(){
+
+        var cookie=document.cookie;
+        if(cookie.length==0)
+        {
+          window.location.href="/login.html";
+        }
         var ws_url="ws://"+window.location.host+"/websocket";
-        websock=new WebSocket(ws_url);
-        websock.onopen=this.wsonopen;
-        Socket.onmessage=
-        Socket.onerror=
-        Socket.onclose
+        this.websock=new WebSocket(ws_url);
+        this.websock.onopen=this.wsonopen;
+        this.websock.onmessage=this.wsonmessage;
+        this.websock.onerror=this.wsonerror;
+        this.websock.onclose=this.wsonclose;
       },
       wsonopen:function()
       {
@@ -106,22 +114,37 @@
         //连接关闭时触发
         alert("连接关闭");
       },
+      get_cookie_name:function()
+      {
+        var cookie=document.cookie;
+        var cookie_array=cookie.split("; ");
+        for(var i=0;i<cookie_array.length;i++)
+        {
+          var arry=cookie_array[i].split("=")
+          if(arry[0]=="NAME"){
+            return arry[1];
+          }
+        }
+        return "匿名";
+      },
       send:function()
       {
         if(this.send_msg.length==0){
           alert("消息不能为空");
           return;
         }
-        var msg="<p>用户名："+this.send_msg+"</p>";
-        whis.websock.send(msg);
+        var username=this.get_cookie_name();
+        this.real_msg="<p>"+username+":"+this.send_msg+"</p>";
+        this.websock.send(this.real_msg);
         this.send_msg="";
       },
       quit:function()
       {
-        whis.websock.close();
-        window.location.href="/login.html"
+        this.websock.close();
+        window.location.href="/login.html";
       }
     }
-  })
+  });
+  app.init();
 </script>
 </html>

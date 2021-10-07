@@ -443,6 +443,7 @@ namespace im{
 	{
 		struct mg_http_message* hm=(struct mg_http_message*)ev_data;
 		struct mg_ws_message* wm=(mg_ws_message*)ev_data;
+		
 		switch (ev)
 		{
 		case MG_EV_HTTP_MSG:
@@ -467,7 +468,9 @@ namespace im{
 					return;
 				}
 				string name;
-				GetCookie(cookie_str->ptr,"NAME",&name);
+				string tmp;
+				tmp.assign(cookie_str->ptr,cookie_str->len);
+				GetCookie(tmp,"NAME",&name);
 				string msg=name+"加入聊天室";
 				Broadcast(msg);
 				mg_ws_upgrade(c,hm,NULL);//确认升级websocket
@@ -486,6 +489,15 @@ namespace im{
 			break;
 		case MG_EV_WS_MSG:
 		{
+			// if(cookie_str==NULL)
+			// 	{
+			// 		//未登录用户
+					
+			// 		string body=R"({"reason":"未登录"})";
+			// 		string header="Content-Type:application/json\r\n";
+			// 		mg_http_reply(c,403,header.c_str(),body.c_str());
+			// 		return;
+			// 	}
 			string msg;
 			msg.assign(wm->data.ptr,wm->data.len);
 			Broadcast(msg);
@@ -496,6 +508,7 @@ namespace im{
 			struct session *ss =GetSessionByConn(c);
 			if(ss!=NULL)
 			{
+
 				string msg=ss->name+"离开聊天室";
 				Broadcast(msg);
 				_tb_user->UpdateStatus(ss->name,OFFLINE);

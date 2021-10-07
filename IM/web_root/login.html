@@ -397,11 +397,11 @@
                 {
                     this.show_flag="login";
                 }else{
-                    if(this.username.length<6){
-                        alert("用户名不少于6个字符");
+                    if(this.username.length==0){
+                        alert("用户名不得为空");
                         return;
-                    } if(this.password.length<6){
-                        alert("密码不少于6个字符");
+                    } if(this.password.length==0){
+                        alert("密码不得为空");
                         return;
                     }
                     var userinfo={
