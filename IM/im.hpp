@@ -124,6 +124,36 @@ namespace im{
 		mysql_free_result(res);
 		return true;
 	}
+	bool SelectOnlineUser(Json::Value *users){
+		#define SELECT_USER_ONLINE "select name from tb_user where status='%s';"
+		char tmp_sql[4096]={0};
+		sprintf(tmp_sql, SELECT_USER_ONLINE,ONLINE);
+		_mutex.lock();
+		if(QuerySql(tmp_sql)==false)
+		{
+			_mutex.unlock();
+			return false;
+		}
+			
+		MYSQL_RES *res=mysql_store_result(_mysql);
+		_mutex.unlock();
+		if(res==NULL)
+		{
+			cout<<"select all user store result failed"<<mysql_error(_mysql)<<endl;
+			return false;
+		}
+		int num_row=mysql_num_rows(res);
+		for(int i=0;i<num_row;i++)
+		{
+			Json::Value user;
+			MYSQL_ROW row=mysql_fetch_row(res);
+			user["name"]=row[0];
+			users->append(user);
+		}
+		mysql_free_result(res);
+		return true;
+
+	}
 	bool VerifyUser(const string &name,const string &passwd)
 	{
 		
@@ -439,6 +469,13 @@ namespace im{
 		}
 		return ;
 	}
+	static void SendByName(const string name,const string &msg){
+
+	}
+	
+	static void showOnineUser(){
+		Json::Reader rsp;
+	}
 	static void callback(mg_connection *c, int ev, void *ev_data, void *fn_data)
 	{
 		struct mg_http_message* hm=(struct mg_http_message*)ev_data;
@@ -454,6 +491,10 @@ namespace im{
 			}else if(mg_http_match_uri(hm,"/login"))
 			{	//登录的提交表单的数据请求
 				login(c,hm);
+			}
+			else if(mg_http_match_uri(hm,"/ShowOnline")){
+				showOnineUser();
+
 			}else if(mg_http_match_uri(hm,"/websocket"))
 			{	//websocket的升级请求
 				//建立ws聊天的时候，应检测登陆状态
@@ -526,6 +567,7 @@ namespace im{
 		string _addr;//地址信息
 		static list<session> _list;
 	};
+
 	IM::IM()
 	{
 

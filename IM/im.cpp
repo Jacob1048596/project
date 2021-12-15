@@ -11,7 +11,6 @@ void sql_test()
 	// Json::StyledWriter wri;
 	// cout<<wri.write(User)<<endl;
 	
-	
 }
 int main()
 {

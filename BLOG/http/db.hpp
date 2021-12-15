@@ -5,8 +5,8 @@
 
 #define MYSQL_HOST "127.0.0.1"
 #define MYSQL_USER "root"
-#define MYSQL_PSWD ""
-#define MYSQL_DB "db_blog1"
+#define MYSQL_PSWD "114514"
+#define MYSQL_DB "db_blog"
 namespace blog_system
 {
     static std::mutex g_mutex;

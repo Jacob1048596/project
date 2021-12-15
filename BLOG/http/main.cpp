@@ -88,8 +88,10 @@ void GetAllBlog(const Request &req,Response &rsp)
 }
 void GetOneBlog(const Request &req,Response &rsp)
 {
-    Json::Value blogs;
-    bool ret=table_blog->GetOne(&blogs);
+    int blog_id=std::stoi(req.matches[1]);
+    Json::Value blog;
+    blog["id"]=blog_id;
+    bool ret=table_blog->GetOne(&blog);
      if(ret==false)
     {
         printf("GetOne from database filed!\n");
@@ -97,7 +99,7 @@ void GetOneBlog(const Request &req,Response &rsp)
         return ;
     }
     Json::FastWriter writer;
-    rsp.set_content(writer.write(blogs),"application/json");
+    rsp.set_content(writer.write(blog),"application/json");
     rsp.status=200;
     return;
 }
@@ -185,7 +187,9 @@ void GetAllTag(const Request &req,Response &rsp)
 }
 void GetOneTag(const Request &req,Response &rsp)
 {
+     int tag_id=std::stoi(req.matches[1]);
     Json::Value tag;
+    tag["id"]=tag_id;
     bool ret=table_tag->GetOne(&tag);
      if(ret==false)
     {
