@@ -173,7 +173,7 @@ void UpdateTag(const Request &req,Response &rsp)
 void GetAllTag(const Request &req,Response &rsp)
 {
       Json::Value tags;
-    bool ret=table_blog->GetAll(&tags);
+    bool ret=table_tag->GetAll(&tags);
      if(ret==false)
     {
         printf("GetAll from database filed!\n");

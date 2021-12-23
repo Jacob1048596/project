@@ -63,6 +63,7 @@
 </nav>
 <hr>
 <!-- nav end -->
+<div id="app">
 <!-- banner start -->
 <div class="am-g am-g-fixed blog-fixed am-u-sm-centered blog-article-margin">
     <div data-am-widget="slider" class="am-slider am-slider-b1" data-am-slider='{&quot;controlNav&quot;:false}' >
@@ -120,7 +121,7 @@
     </div>
 </div>
 <!-- banner end -->
-<div id="app">
+
 <!-- content srart -->
 <div class="am-g am-g-fixed blog-fixed">
     <div class="am-u-md-8 am-u-sm-12">
@@ -187,7 +188,7 @@
             <a href="" class="blog-tag">这是标签</a>
             <a href="" class="blog-tag">Impossible</a>
             <a href="" class="blog-tag">开源前端框架</a> -->
-            <a href="#" class="blog-tag" v-for="tag in tag_list">{{tag.name}}</a>
+            <a href="" class="blog-tag" v-for="tag in tag_list">{{tag.tag_name}}</a>
             </div>
         </div>
         <div class="blog-sidebar-widget blog-bor">
@@ -243,35 +244,57 @@
 </body>
 
 </div>
+<!--[if (gte IE 9)|!(IE)]><!-->
+    <script src="assets/js/jquery.min.js"></script>
+    <!--<![endif]-->
+    <!--[if lte IE 8 ]>
+    <script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+    <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+    <![endif]-->
+    <script src="assets/js/amazeui.min.js"></script>
+    <script src="https:/cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 <script>
     var app=new Vue({
         el:'#app',
         data:{
             message:'hello',
             author:'zhagjiabiao',
-            tag_list:[
-                {id:1,name:"C++"},
-                {id:2,name:"JAVA"},
-                {id:4,name:"Mysql"}
-            ],
-            blog_list:[
-                {id:1,tag_id:2,title:"这是一个测试标题",content:"这是一个测试正文",ctime:"2021.12.22"},
-                {id:2,tag_id:3,title:"这是一个测试标题1",content:"这是一个测试正文1",ctime:"2021.12.221"},
-            ]
+            tag_list:[],
+            blog_list:[]
+        },
+        methods:{
+            get_tag_lists:function(){
+                $.ajax({ 
+                    url:"/tag",
+                    type:"get", 
+                    context:this,
+                    success:function(result){
+                        this.tag_list=result;
+                    }
+                })
+            },
+            get_blog_lists:function(){
+                $.ajax({
+                    url:"/blog",
+                    type:"get", 
+                    context:this,
+                    success:function(result){
+                        this.blog_list=result;
+                    }
+                })
+            }
+          
+             
         }
-    })
+    });
+    app.get_tag_lists();
+    app.get_blog_lists();
+ 
 </script>
 
 
-<!--[if (gte IE 9)|!(IE)]><!-->
-<script src="assets/js/jquery.min.js"></script>
-<!--<![endif]-->
-<!--[if lte IE 8 ]>
-<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
-<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
-<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
-<![endif]-->
-<script src="assets/js/amazeui.min.js"></script>
-<script src="https:/cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 </body>
 </html>

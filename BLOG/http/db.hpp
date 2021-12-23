@@ -73,7 +73,7 @@ namespace blog_system
             sprintf(temp,INSERT_BLOG,
             blog["tag_id"].asInt(),
             blog["title"].asCString(),
-            blog["connect"].asCString());
+            blog["content"].asCString());
             bool ret=MysqlQuery(_mysql,temp);
             free(temp);
             return ret;
@@ -94,7 +94,7 @@ namespace blog_system
              sprintf(temp,UPDATE_BLOG,
             blog["tag_id"].asInt(),
             blog["title"].asCString(),
-            blog["connect"].asCString(),
+            blog["content"].asCString(),
             blog["id"].asInt());
             bool ret=MysqlQuery(_mysql,temp);
             free(temp);
@@ -103,7 +103,7 @@ namespace blog_system
         }
         bool GetAll(Json::Value* blogs)//通过blog返回所有的博客信息（列表显示，不包含正文）
         {
-             #define GETALL_BLOG "select id,tag_id,title,ctime from tb_blog"
+             #define GETALL_BLOG "select id,tag_id,title,ctime,content from tb_blog"
 
             _mutex.lock();
             bool ret=MysqlQuery(_mysql,GETALL_BLOG);//执行查询语句
@@ -130,6 +130,7 @@ namespace blog_system
                 blog["tag_id"]=std::stoi(row[1]);
                 blog["title"]=row[2];
                 blog["ctime"]=row[3];
+                blog["content"]=row[4];
                 blogs->append(blog);//添加json数组元素
             }
             mysql_free_result(res);
