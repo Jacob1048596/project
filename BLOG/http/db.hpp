@@ -103,7 +103,7 @@ namespace blog_system
         }
         bool GetAll(Json::Value* blogs)//通过blog返回所有的博客信息（列表显示，不包含正文）
         {
-             #define GETALL_BLOG "select id,tag_id,title,ctime,content from tb_blog"
+             #define GETALL_BLOG "select id,tag_id,title,ctime,content from tb_blog;"
 
             _mutex.lock();
             bool ret=MysqlQuery(_mysql,GETALL_BLOG);//执行查询语句

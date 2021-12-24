@@ -27,7 +27,7 @@
 <header class="am-g am-g-fixed blog-fixed blog-text-center blog-header">
     <div class="am-u-sm-8 am-u-sm-centered">
         <img width="200" src="http://s.amazeui.org/media/i/brand/amazeui-b.png" alt="Amaze UI Logo"/>
-        <h2 class="am-hide-sm-only">中国最帅的男人</h2>
+        <h2 class="am-hide-sm-only">博博博博客</h2>
     </div>
 </header>
 <hr>
@@ -145,7 +145,7 @@
                 <img src="assets/i/f10.jpg" alt="" class="am-u-sm-12">
             </div>
             <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
-                <span><a href="" class="blog-color">article &nbsp;</a></span>
+                <span><a href="" class="blog-color" v-show="tag_list.length > 0">{{get_tagname_by_tagid(blog.tag_id)}} &nbsp;</a></span>
                 <span> @{{author}}&nbsp;</span>
                 <span>{{blog.ctime}}</span>
                 <h1><a href="">{{blog.title}}</a></h1>
@@ -284,6 +284,14 @@
                         this.blog_list=result;
                     }
                 })
+            },
+            get_tagname_by_tagid:function(tag_id){
+                for(idx in this.tag_list){
+                    if(this.tag_list[idx].tag_id==tag_id){
+                        return this.tag_list[idx].tag_name;
+                    }
+                }
+                return "UNKNOWN";
             }
           
              
