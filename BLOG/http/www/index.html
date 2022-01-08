@@ -141,17 +141,15 @@
             </div>
         </article>
         <article class="am-g blog-entry-article" v-for="blog in blog_list">
-            <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
+            <!-- <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-img">
                 <img src="assets/i/f10.jpg" alt="" class="am-u-sm-12">
-            </div>
+            </div> -->
             <div class="am-u-lg-6 am-u-md-12 am-u-sm-12 blog-entry-text">
                 <span><a href="" class="blog-color" v-show="tag_list.length > 0">{{get_tagname_by_tagid(blog.tag_id)}} &nbsp;</a></span>
                 <span> @{{author}}&nbsp;</span>
                 <span>{{blog.ctime}}</span>
                 <h1><a href="">{{blog.title}}</a></h1>
-                <p>{{blog.content}}
-                </p>
-                <p><a href="" class="blog-continue">continue reading</a></p>
+                <p><a href="" class="blog-continue">continue reading???</a></p>
             </div>
         </article>
       

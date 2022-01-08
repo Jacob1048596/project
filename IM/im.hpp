@@ -214,6 +214,7 @@ namespace im{
 		mysql_free_result(res);
 		return true;
 	}
+
 	private:
 		MYSQL *_mysql;
 		mutex _mutex;
@@ -473,8 +474,20 @@ namespace im{
 
 	}
 	
-	static void showOnineUser(){
-		Json::Reader rsp;
+	static void showOnineUser(mg_connection *c,mg_http_message* hm){
+		Json::Value users;
+		int rsp_status=200;
+		bool ret=_tb_user->SelectOnlineUser(&users);
+		 if(ret==false)
+   		 {
+        		printf("GetAll from database filed!\n");
+       		 	rsp_status=500;
+        		return ;
+  		 }
+		  Json::FastWriter writer;
+		  string header="Content-Type:application/json\r\n";
+		  mg_http_reply(c,rsp_status,header.c_str(),writer.write(users).c_str());
+    		
 	}
 	
 	static void callback(mg_connection *c, int ev, void *ev_data, void *fn_data)
@@ -494,7 +507,7 @@ namespace im{
 				login(c,hm);
 			}
 			else if(mg_http_match_uri(hm,"/ShowOnline")){
-				showOnineUser();
+				showOnineUser(c,hm);
 
 			}else if(mg_http_match_uri(hm,"/websocket"))
 			{	//websocket的升级请求

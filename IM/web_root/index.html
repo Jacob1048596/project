@@ -6,20 +6,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style type="text/css">
-    body {
+      body {
       background-color: #789; margin: 0;
       padding: 0; font: 14px Helvetica, Arial, sans-serif;
     }
     div.content {
-        width: 800px; height:600px;margin: 2em auto; padding: 20px 50px;
-        background-color: #fff; border-radius: 1em;
+        width: 1100px; height:600px;margin: 2em auto; padding: 20px 50px;
+        background-color: #fff; border-radius: 1em;float: right;
     }
+	  div.member{
+        width: 300px; height:650px;margin: 2em auto; 
+        background-color: #fff; border-radius: 1em;float: left;
+    }
+    
+    div.username{
+      width: 130px; height:50px;
+      float: right;
+      margin: 2em auto; 
+    }
+    div.usericon{
+        width: 50px; height:50px;margin: 2em auto; 
+        background-color: #fff;; border-radius: 1em;float: left;
+    }
+
     #messages {
-      border: 2px solid #fec; border-radius: 0em;
+      border: 2px solid #fec; border-radius: 1em;
       height: 30em; overflow: scroll; padding: 0.5em 1em;
     }
+    #userinfo{
+        width: 250px; height:100px;
+        background-color: rgb(131, 167, 204); border-radius: 1em;
+    }
+	  #userlist {
+      border: 2px solid #fec; border-radius: 1em;
+      height: 30em;width: 270px;  overflow: scroll; 
+    }
     #send_input{
-        width:650px;
+        width:700px;
+		border-radius: 1em;
+    }
+	#send_button{
+		border-radius: 1em;
+    }
+	#quit_button{
+        
+		border-radius: 1em;
+		
     }
     a:link, a:visited { color: #69c; text-decoration: none; }
     @media (max-width: 700px) {
@@ -47,6 +79,19 @@
 </head>
 <body>
   <div id="app">
+    <div class="member">
+      <h1>用户列表</h1>
+      <div id="userlist">
+    
+          <button id="userinfo" v-for="name in user_online">
+            <div class="usericon"></div>
+            <div class="username"><h3>{{name.name}}</h3></div>
+          </button>
+      </div>
+      <p>
+        <button id="send_button" v-on:click="ShowOnline()"> 刷新用户 </button>
+          </p>
+      </div>
     <div class="content">
       <h1>IM聊天系统</h1>
 
@@ -66,13 +111,15 @@
   </div>
 </body>
 <script src="https:/cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https:/ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
 <script>
   var app=new Vue({
     el:"#app",
     data:{
       send_msg:"",
       websock:null,
-      real_msg:""
+      real_msg:"",
+      user_online:[]
     },
     methods:{
       init:function(){
@@ -88,6 +135,16 @@
         this.websock.onmessage=this.wsonmessage;
         this.websock.onerror=this.wsonerror;
         this.websock.onclose=this.wsonclose;
+      },
+      ShowOnline:function(){
+        $.ajax({ 
+                    url:"/ShowOnline",
+                    type:"get", 
+                    context:this,
+                    success:function(result){
+                        this.user_online=result;
+                    }
+                })
       },
       wsonopen:function()
       {
