@@ -566,11 +566,13 @@ namespace im{
 		
 		if(Message["send_name"]=="global")
 		{
-			string public_msg="<p>"+Message["user_name"].asString()+":"+Message["send_msg"].asString()+"<p>";
+			
+			//string public_msg=Message.toStyledString() ;
+			string public_msg="<p>"+Message["user_name"].asString()+":"+Message["send_msg"].asString()+" time :"+Message["msg_time"].asString()+"<p>";
 			Broadcast(public_msg);
 		}
 		else{
-			SendByName(Message["send_name"].asString(),Message["send_msg"].asString());
+			//SendByName(Message["send_name"].asString(),Message["send_msg"].asString());
 		}
 			
 	}

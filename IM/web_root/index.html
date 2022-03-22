@@ -195,8 +195,11 @@
       wsonmessage:function(e)
       {
         //收到消息的回调函数
-        
+        //var get_msg=JSON.parse(e);
+
+
         var com_div=document.createElement("div");
+        //com_div.innerHTML="<p>"+get_msg["user_name"]+":"+get_msg["send_msg"]+"time:"+get_msg["msg_time"]+"</p>";
         com_div.innerHTML=e.data;
         var html_div=document.getElementById("messages");
         html_div.appendChild(com_div);
@@ -233,11 +236,13 @@
         }
         var username=this.get_cookie_name();
         user_name=username;
+        var time=new Date();
         var Json_msg={
           send_name:"global",
           send_msg:this.send_msg,
           user_name:username,
           msg_type:"text",
+          msg_time:time.toUTCString(),
         }
         this.real_msg="<p>"+user_name+":"+this.send_msg+"to"+Json_msg.send_name+"</p>";
         var obj=JSON.stringify(Json_msg); //将json对象转为json字符串才能正常传输
