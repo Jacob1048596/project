@@ -124,6 +124,38 @@ namespace im{
 		mysql_free_result(res);
 		return true;
 	}
+	bool SelectAllInfo(Json::Value *users)
+	{
+		#define SELECT_USER_ALL "select id,name,status from tb_user ;"
+		char tmp_sql[4096]={0};
+		sprintf(tmp_sql,SELECT_USER_ALL);
+		_mutex.lock();
+		if(QuerySql(tmp_sql)==false)
+		{
+			_mutex.unlock();
+			return false;
+		}
+			
+		MYSQL_RES *res=mysql_store_result(_mysql);
+		_mutex.unlock();
+		if(res==NULL)
+		{
+			cout<<"select all user info store result failed"<<mysql_error(_mysql)<<endl;
+			return false;
+		}
+		int num_row=mysql_num_rows(res);
+		for(int i=0;i<num_row;i++)
+		{
+			Json::Value user;
+			MYSQL_ROW row=mysql_fetch_row(res);
+			user["id"]=stoi(row[0]);
+			user["name"]=row[1];
+			user["status"]=row[2];
+			users->append(user);
+		}
+		mysql_free_result(res);
+		return true;
+	}
 	bool SelectOnlineUser(Json::Value *users){
 		#define SELECT_USER_ONLINE "select name from tb_user where status='%s';"
 		char tmp_sql[4096]={0};
@@ -471,7 +503,20 @@ namespace im{
 		return ;
 	}
 	static void SendByName(const string name,const string &msg){
+		mg_connection *c;
 
+		auto it=_list.begin();
+		for(;it!=_list.end();it++)
+		{
+			if(it->name==name)
+			{
+				c=it->conn;
+				if(c->is_websocket){
+				mg_ws_send(c,msg.c_str(),msg.size(),WEBSOCKET_OP_TEXT);
+				}
+			}
+		}
+		return ;
 	}
 	
 	static void showOnineUser(mg_connection *c,mg_http_message* hm){
@@ -489,7 +534,46 @@ namespace im{
 		  mg_http_reply(c,rsp_status,header.c_str(),writer.write(users).c_str());
     		
 	}
-	
+
+	static void showAllUser(mg_connection *c,mg_http_message* hm){
+		Json::Value users;
+		int rsp_status=200;
+		bool ret=_tb_user->SelectAllInfo(&users);
+		 if(ret==false)
+   		 {
+        		printf("GetAll from database filed!\n");
+       		 	rsp_status=500;
+        		return ;
+  		 }
+		  Json::FastWriter writer;
+		  string header="Content-Type:application/json\r\n";
+		  mg_http_reply(c,rsp_status,header.c_str(),writer.write(users).c_str());
+    		
+	}
+	static void Message(string msg)
+	{
+		
+		//Broadcast(msg);
+		
+		Json::Value Message;
+		Json::Reader reader;
+		bool ret=reader.parse(msg,Message);
+		if (ret==false)
+		{
+			printf("json error");
+			return ;
+		} 
+		
+		if(Message["send_name"]=="global")
+		{
+			string public_msg="<p>"+Message["user_name"].asString()+":"+Message["send_msg"].asString()+"<p>";
+			Broadcast(public_msg);
+		}
+		else{
+			SendByName(Message["send_name"].asString(),Message["send_msg"].asString());
+		}
+			
+	}
 	static void callback(mg_connection *c, int ev, void *ev_data, void *fn_data)
 	{
 		struct mg_http_message* hm=(struct mg_http_message*)ev_data;
@@ -508,6 +592,9 @@ namespace im{
 			}
 			else if(mg_http_match_uri(hm,"/ShowOnline")){
 				showOnineUser(c,hm);
+
+			}else if(mg_http_match_uri(hm,"/ShowAllUser")){
+				showAllUser(c,hm);
 
 			}else if(mg_http_match_uri(hm,"/websocket"))
 			{	//websocket的升级请求
@@ -555,7 +642,7 @@ namespace im{
 			// 	}
 			string msg;
 			msg.assign(wm->data.ptr,wm->data.len);
-			Broadcast(msg);
+			Message(msg);
 		}
 			break;
 		case MG_EV_CLOSE:

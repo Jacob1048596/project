@@ -90,10 +90,7 @@
 <body>
   <div id="app">
     <div class="member">
-      <h1>用户列表</h1>
-      <div id="userlist">
-    
-          <button id="userinfo" v-for="user in user_online" v-on:click="CreateSingle(user.name)">
+          <button id="userinfo" v-for="user in user_online">
             <div class="usericon"></div>
             <div class="userinfo">
               <div class="username">
@@ -110,10 +107,7 @@
             </div>
           </button>
       </div>
-      <p>
-        <button id="send_button" v-on:click="ShowAllUser()"> 刷新用户 </button>
-          </p>
-      </div>
+     
     <div class="content">
       <h1>IM聊天系统</h1>
 
@@ -138,10 +132,6 @@
   var app=new Vue({
     el:"#app",
     data:{
-       Message_Json:{
-        send_name:"global",
-      },
-      user_name:"",
       send_msg:"",
       websock:null,
       real_msg:"",
@@ -182,10 +172,6 @@
                         this.user_online=result;
                     }
                 })
-      },
-      CreateSingle:function(name){
-
-        window.location.href="/single.html";
       },
       wsonopen:function()
       {
@@ -232,27 +218,17 @@
           return;
         }
         var username=this.get_cookie_name();
-        user_name=username;
-        var Json_msg={
-          send_name:"global",
-          send_msg:this.send_msg,
-          user_name:username,
-          msg_type:"text",
-        }
-        this.real_msg="<p>"+user_name+":"+this.send_msg+"to"+Json_msg.send_name+"</p>";
-        var obj=JSON.stringify(Json_msg); //将json对象转为json字符串才能正常传输
-        this.websock.send(obj);
-        //alert(Message_Json.send_msg+Message_Json.send_name+Message_Json.send_name);
-        this.real_msg="";
+        this.real_msg="<p>"+username+":"+this.send_msg+"</p>";
+        this.websock.send(this.real_msg);
+        this.send_msg="";
       },
       quit:function()
       {
         this.websock.close();
-        window.location.href="/login.html";
+        window.location.href="/index.html";
       }
     }
   });
   app.init();
-  app.ShowAllUser();
 </script>
 </html>
